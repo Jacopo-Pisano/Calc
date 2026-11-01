@@ -35,7 +35,9 @@ sistema.
 
 ## Scaricare l'APK
 
-L'APK è nella pagina **Releases** del repository. Ogni push esegue anche il
+L'APK è nella pagina **Releases** del repository. Per pubblicare una nuova
+versione basta incrementare `versionName` e `versionCode` in
+`android/app/build.gradle.kts`: al push la CI crea la release. Ogni push esegue anche il
 workflow **Build APK** su GitHub Actions: l'APK di sviluppo si trova
 negli *Artifacts* dell'esecuzione (`xiso2xex-apk`). È firmato con la chiave di
 debug, quindi si installa direttamente (abilita "installa app sconosciute").

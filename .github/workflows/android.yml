@@ -43,10 +43,15 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
 
-      - name: Rinomina APK
+      - name: Versione
+        id: ver
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          [[ "$GITHUB_REF_TYPE" == "tag" ]] || VERSION="dev-${GITHUB_SHA::7}"
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' android/app/build.gradle.kts)
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           cp android/app/build/outputs/apk/release/app-release.apk "xiso2xex-${VERSION}.apk"
 
       - uses: actions/upload-artifact@v4
@@ -54,11 +59,21 @@ jobs:
           name: xiso2xex-apk
           path: xiso2xex-*.apk
 
+      # Pubblica una release quando viene fatto push di un tag v*, oppure al
+      # primo push in cui versionName (android/app/build.gradle.kts) non ha
+      # ancora una release: per pubblicare una nuova versione basta
+      # incrementare versionName/versionCode.
       - name: Pubblica release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.ver.outputs.version }}
         run: |
-          gh release create "$GITHUB_REF_NAME" xiso2xex-*.apk \
-            --title "ISO → XEX $GITHUB_REF_NAME" \
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "La release $TAG esiste già: niente da pubblicare."
+            exit 0
+          fi
+          gh release create "$TAG" xiso2xex-*.apk \
+            --target "$GITHUB_SHA" \
+            --title "ISO → XEX $TAG" \
             --notes-file .github/release-notes.md
