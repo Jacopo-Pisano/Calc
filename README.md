@@ -35,7 +35,8 @@ sistema.
 
 ## Scaricare l'APK
 
-Ogni push esegue il workflow **Build APK** su GitHub Actions: l'APK si trova
+L'APK è nella pagina **Releases** del repository. Ogni push esegue anche il
+workflow **Build APK** su GitHub Actions: l'APK di sviluppo si trova
 negli *Artifacts* dell'esecuzione (`xiso2xex-apk`). È firmato con la chiave di
 debug, quindi si installa direttamente (abilita "installa app sconosciute").
 

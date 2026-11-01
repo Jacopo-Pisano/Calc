@@ -2,8 +2,13 @@ name: Build APK
 
 on:
   push:
+    branches: ["**"]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -38,7 +43,22 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
 
+      - name: Rinomina APK
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [[ "$GITHUB_REF_TYPE" == "tag" ]] || VERSION="dev-${GITHUB_SHA::7}"
+          cp android/app/build/outputs/apk/release/app-release.apk "xiso2xex-${VERSION}.apk"
+
       - uses: actions/upload-artifact@v4
         with:
           name: xiso2xex-apk
-          path: android/app/build/outputs/apk/release/*.apk
+          path: xiso2xex-*.apk
+
+      - name: Pubblica release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" xiso2xex-*.apk \
+            --title "ISO → XEX $GITHUB_REF_NAME" \
+            --notes-file .github/release-notes.md
