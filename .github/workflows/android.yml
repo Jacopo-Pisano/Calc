@@ -31,9 +31,10 @@ jobs:
 
       - name: Compila APK
         working-directory: android
-        env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
         run: |
+          # Il runner espone l'NDK in ANDROID_NDK_ROOT; cargo-ndk legge ANDROID_NDK_HOME.
+          export ANDROID_NDK_HOME="${ANDROID_NDK_HOME:-$ANDROID_NDK_ROOT}"
+          echo "NDK: $ANDROID_NDK_HOME"
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
 
