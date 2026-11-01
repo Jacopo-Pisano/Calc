@@ -1,0 +1,28 @@
+[package]
+name = "xiso-core"
+version = "0.1.0"
+edition = "2021"
+description = "Lettore XDVDFS (Xbox / Xbox 360 ISO) ed estrattore di default.xex, con binding JNI per Android"
+license = "MIT"
+
+[lib]
+name = "xiso"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "xiso2xex"
+path = "src/bin/xiso2xex.rs"
+
+[features]
+default = ["jni"]
+jni = ["dep:jni"]
+
+[dependencies]
+jni = { version = "0.21", default-features = false, optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1

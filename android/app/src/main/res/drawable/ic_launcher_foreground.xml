@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Un disco stilizzato con una freccia verso destra. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M54,30a24,24 0,1 0,0.01 0zM54,48a6,6 0,1 1,-0.01 0z" />
+    <path
+        android:fillColor="#FF107C10"
+        android:pathData="M60,62h10v-6l10,10l-10,10v-6h-10z" />
+</vector>
